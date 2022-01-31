@@ -5,13 +5,17 @@
 class ofApp : public ofBaseApp{
 
 	public:
+
 		void setup();
 		void update();
 		void draw();
 
 		ofMesh charMesh;
+		ofMesh background;
 		ofShader charShader;
+		ofShader backgroundShader;
 		ofImage alienImg;
+		ofImage forest;
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -24,5 +28,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		
 		
 };
