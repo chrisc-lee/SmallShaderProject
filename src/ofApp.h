@@ -12,10 +12,25 @@ class ofApp : public ofBaseApp{
 
 		ofMesh charMesh;
 		ofMesh background;
-		ofShader charShader;
+		ofMesh cloudMesh;
+		ofMesh sunMesh;
+
+		ofShader alphaTestShader;
 		ofShader backgroundShader;
+		ofShader cloudShader;
+		ofShader sunShader;
+		ofShader spriteSheetShader;
+
 		ofImage alienImg;
 		ofImage forest;
+		ofImage cloudImg;
+		ofImage sunImg;
+		ofImage walkAnim;
+
+		bool walkRight;
+		bool walkLeft;
+
+		glm::vec3 charPos;
 
 		void keyPressed(int key);
 		void keyReleased(int key);
