@@ -4,8 +4,11 @@ in vec2 fragUV;
 
 out vec4 outCol;
 
+// set alpha
+uniform float alpha = 1.0;
+
 void main()
 {
 	outCol = texture(tex, fragUV);
-	outCol.a = min(outCol.a, 0.8);
+	outCol.a = min(outCol.a, alpha);
 }

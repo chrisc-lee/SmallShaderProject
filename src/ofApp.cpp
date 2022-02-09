@@ -30,7 +30,7 @@ void ofApp::setup(){
 
 	buildMesh(charMesh, 0.1, 0.2, glm::vec3(0.0, -0.25, 0.0));
 	buildMesh(background, 1.0, 1.0, glm::vec3(0.0, 0.0, 0.5));
-	buildMesh(cloudMesh, 0.25, 0.15, glm::vec3(-0.55, 0.0, 0.0));
+	buildMesh(cloudMesh, 0.25, 0.15, glm::vec3(0.0, 0.0, 0.0));
 	buildMesh(sunMesh, 1.0, 1.0, glm::vec3(0.0, 0.0, 0.4));
 
 	alienImg.load("alien.png");
@@ -64,16 +64,21 @@ void ofApp::draw(){
 	spriteSheetShader.begin();
 	spriteSheetShader.setUniform2fv("size", glm::value_ptr(spriteSize));
 	spriteSheetShader.setUniform2fv("offset", glm::value_ptr(spriteFrame));
+	glm::mat4 charTransform = transformMat(charPos, 0.0, glm::vec3(1.0, 1.0, 1.0));
+	spriteSheetShader.setUniformMatrix4f("transform", charTransform);
+
 	if (walkRight) {
 	   float speed = 0.4 * ofGetLastFrameTime();
 	   charPos += glm::vec3(speed, 0.0, 0.0);
-	   spriteSheetShader.setUniform3fv("translation", glm::value_ptr(charPos));
+	   charTransform = transformMat(charPos, 0.0, glm::vec3(1.0, 1.0, 1.0));
+	   spriteSheetShader.setUniformMatrix4f("transform", charTransform);
 	   spriteSheetShader.setUniform1i("invertX", false);
 	}
 	else if (walkLeft) {
 		float speed = 0.4 * ofGetLastFrameTime();
 		charPos -= glm::vec3(speed, 0.0, 0.0);
-		spriteSheetShader.setUniform3fv("translation", glm::value_ptr(charPos));
+		charTransform = transformMat(charPos, 0.0, glm::vec3(1.0, 1.0, 1.0));
+		spriteSheetShader.setUniformMatrix4f("transform", charTransform);
 		spriteSheetShader.setUniform1i("invertX", true);
 	}
 	spriteSheetShader.setUniformTexture("tex", walkAnim, 0);
@@ -85,8 +90,9 @@ void ofApp::draw(){
 	alphaTestShader.begin();
 
 	
-
+	glm::mat4 transformForest = glm::mat4();
 	alphaTestShader.setUniformTexture("tex", forest, 0);
+	alphaTestShader.setUniformMatrix4f("transform", transformForest);
 	background.draw();
 	
 	alphaTestShader.end();
@@ -98,17 +104,49 @@ void ofApp::draw(){
 	// alpha blending
 	ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ALPHA);
 
+	// draw clounds
 	cloudShader.setUniformTexture("tex", cloudImg, 0);
+
+	//glm::mat4 transformCloud1 = transformMat(glm::vec3(-0.55, 0.0, 0.0), 0.0f, glm::vec3(1.5, 1, 1));
+	
+	static float rotation = 0.0f;
+	rotation += 0.1f;
+	//construct the transform for our un-rotated cloud
+	glm::mat4 translationA = glm::translate(glm::vec3(-0.55, 0.0, 0.0));
+	glm::mat4 scaleA = glm::scale(glm::vec3(1.5, 1, 1));
+	glm::mat4 transformA = translationA * scaleA;
+
+	//apply a rotation to that
+	glm::mat4 ourRotation = glm::rotate(rotation, glm::vec3(0.0, 0.0, 1.0));
+	glm::mat4 newMatrix = translationA * ourRotation * inverse(translationA);
+	glm::mat4 transformCloud1 = newMatrix * transformA;
+	cloudShader.setUniformMatrix4f("transform", transformCloud1);
+	cloudMesh.draw();
+
+	glm::mat4 transformCloud2 = transformMat(glm::vec3(0.4, 0.2, 0.0), 1.0f, glm::vec3(1, 1, 1));
+	cloudShader.setUniformMatrix4f("transform", transformCloud2);
 	cloudMesh.draw();
 
 	// additive blending
 	ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ADD);
 
+	// draw sun
 	cloudShader.setUniformTexture("tex", sunImg, 0);
+	glm::mat4 transformSun = glm::mat4();
+	cloudShader.setUniformMatrix4f("transform", transformSun);
 	sunMesh.draw();
 
 	cloudShader.end();
 	
+}
+
+glm::mat4 ofApp::transformMat(glm::vec3 trans, float rot, glm::vec3 scale)
+{
+	using glm::mat4;
+	mat4 translation = glm::translate(trans);
+	mat4 rotation = glm::rotate(rot, glm::vec3(0.0, 0.0, 1.0));
+	mat4 scaler = glm::scale(scale);
+	return translation * rotation * scaler;
 }
 
 //--------------------------------------------------------------

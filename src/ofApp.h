@@ -43,6 +43,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		glm::mat4 transformMat(glm::vec3 trans, float rot, glm::vec3 scale);
 
 		
 		

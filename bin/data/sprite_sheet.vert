@@ -5,17 +5,17 @@ layout (location = 3) in vec2 uv;
 
 uniform vec2 size;
 uniform vec2 offset;
-uniform vec3 translation;
+uniform mat4 transform; 
 uniform bool invertX;
 
 out vec2 fragUV;
 
 void main()
 {
- gl_Position = vec4(pos, 1.0);
+ gl_Position = transform * vec4(pos, 1.0);
  
  // move verticies on screen
- gl_Position = vec4(pos + translation, 1.0);
+ // gl_Position = vec4(pos + translation, 1.0);
 
  // invert texture, multiply by size of a single sprite on 
  // the sheet and then offset by the size of the sprite to 
