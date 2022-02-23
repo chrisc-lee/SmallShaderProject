@@ -2,6 +2,11 @@
 
 #include "ofMain.h"
 
+struct CameraData {
+	glm::vec3 position;
+	float rotation;
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -43,8 +48,10 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		glm::mat4 transformMat(glm::vec3 trans, float rot, glm::vec3 scale);
-
 		
+		glm::mat4 transformMat(glm::vec3 trans, float rot, glm::vec3 scale);
+		glm::mat4 viewMatrix(CameraData cam);
+
+		CameraData cam;
 		
 };
